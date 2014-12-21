@@ -34,23 +34,20 @@ metadata {
 
 	// tile definitions
 	tiles {
-		valueTile("power", "device.power", decoration: "flat") {
+		valueTile("power", "device.power") {
 			state "default", label:'${currentValue} W'
 		}
 		valueTile("energy", "device.energy", decoration: "flat") {
 			state "default", label:'${currentValue} kWh'
         }
-        valueTile("energyCost", "device.energyCost") {
-            state "default", label: '${currentValue}'//, foregroundColor: "#000000", backgroundColor:"#ffffff")
+        valueTile("energyCost", "device.energyCost", decoration: "flat") {
+            state "default", label: '${currentValue}'
 		}
 		standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat") {
-			state "default", label:'reset kWh', action:"reset"
+			state "default", label:'reset', action:"reset"
 		}
 		standardTile("refresh", "device.power", inactiveLabel: false, decoration: "flat") {
 			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
-		}
-		standardTile("configure", "device.power", inactiveLabel: false, decoration: "flat") {
-			state "configure", label:'', action:"configuration.configure", icon:"st.secondary.configure"
 		}
 
 		main (["power","energy","energyCost"])
@@ -77,14 +74,14 @@ def zwaveEvent(physicalgraph.zwave.commands.meterv1.MeterReport cmd) {
     def newValue
     
 	if (cmd.scale == 0) {	
+        newValue = cmd.scaledMeterValue
+        [name: "energy", value: cmd.scaledMeterValue, unit: "kWh"]
         dispValue = String.format("%5.2f",newValue)+"\nkWh"
-        sendEvent(name: "energyDisp", value: dispValue as String, unit: "")
+        sendEvent(name: "energy", value: dispValue as String, unit: "")
         state.energyValue = newValue
         BigDecimal costDecimal = newValue * ( kWhCost as BigDecimal)
         def costDisplay = String.format("%5.2f",costDecimal)
-        sendEvent(name: "energyTwo", value: "Cost\n\$${costDisplay}", unit: "")
-        newValue = cmd.scaledMeterValue
-        [name: "energy", value: cmd.scaledMeterValue, unit: "kWh"]
+        sendEvent(name: "energyCost", value: "Cost\n\$${costDisplay}", unit: "")
     }
     else if (cmd.scale == 1) {
         [name: "energy", value: cmd.scaledMeterValue, unit: "kVAh"]
