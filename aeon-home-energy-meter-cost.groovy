@@ -2,12 +2,12 @@
  *  Aeon Home Energy Meter
  *
  *  Author: SmartThings
- *
- *  Date: 2013-05-30
+ *  Modified by: Joshua Seidel
+ *  Date: 2014-12-28
  */
 metadata {
 	// Automatically generated. Make future change here.
-	definition (name: "Aeon Home Energy Meter w/Cost", namespace: "smartthings", author: "SmartThings") {
+	definition (name: "Aeon Home Energy Meter w/Cost", namespace: "Blueharford", author: "BlueHarford") {
 		capability "Energy Meter"
 		capability "Power Meter"
 		capability "Configuration"
